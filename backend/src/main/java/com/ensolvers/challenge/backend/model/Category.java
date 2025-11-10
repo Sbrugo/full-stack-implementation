@@ -18,4 +18,8 @@ public class Category {
     public String getName(){
         return name;
     }
+
+    public String setName(String name){
+        return this.name = name;
+    }
 }

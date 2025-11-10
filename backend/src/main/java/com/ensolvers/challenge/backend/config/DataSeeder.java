@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 
 @Component
 public class DataSeeder implements CommandLineRunner {
@@ -24,14 +23,12 @@ public class DataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Seed data only if the database is empty
-        if (categoryRepository.count() == 0 && noteRepository.count() == 0) {
+        if (categoryRepository.count() < 1 && noteRepository.count() < 3) {
             loadSeedData();
         }
     }
 
     private void loadSeedData() {
-        // Create Categories
         Category catPersonal = new Category();
         catPersonal.setName("Personal");
 
@@ -43,7 +40,6 @@ public class DataSeeder implements CommandLineRunner {
 
         categoryRepository.saveAll(Arrays.asList(catPersonal, catWork, catIdeas));
 
-        // Create Notes
         Note note1 = new Note();
         note1.setTitle("Buy groceries");
         note1.setContent("Milk, Bread, Cheese, and Fruits.");
@@ -65,7 +61,7 @@ public class DataSeeder implements CommandLineRunner {
         Note note4 = new Note();
         note4.setTitle("Read 'The Pragmatic Programmer'");
         note4.setContent("Read the first 3 chapters.");
-        note4.setArchived(true); // This one is archived
+        note4.setArchived(true); 
 
         noteRepository.saveAll(Arrays.asList(note1, note2, note3, note4));
     }
