@@ -38,7 +38,6 @@ export default function NotesPage() {
       }
     };
     fetchCategories();
-    // Also load archived notes once
     const fetchArchived = async () => {
       try {
         const archived = await getArchivedNotes();
@@ -51,7 +50,6 @@ export default function NotesPage() {
   }, []);
 
   useEffect(() => {
-    // Fetch active notes based on the selected category
     const loadActiveNotes = async () => {
       setLoading(true);
       try {
@@ -70,7 +68,6 @@ export default function NotesPage() {
   }, [selectedCategory]);
 
   const handleSave = () => {
-    // Refetch active notes after saving, respecting the filter
     const reload = async () => {
       const notes =
         selectedCategory && selectedCategory !== "ALL"
@@ -126,7 +123,7 @@ export default function NotesPage() {
   };
 
   return (
-    <div>
+    <div className="bg-black">
       <h1>Notas</h1>
       <button onClick={() => setIsCreating(true)}>Crear Nota</button>
 
@@ -135,6 +132,7 @@ export default function NotesPage() {
           noteToEdit={editingNote}
           onSave={handleSave}
           onClose={handleCloseForm}
+          allCategories={allCategories}
         />
       )}
 

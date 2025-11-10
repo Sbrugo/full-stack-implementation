@@ -22,3 +22,9 @@ export const unarchiveNote = (id: number) =>
 
 export const getAllCategories = () =>
   axios.get(API_CATEGORIES).then((r) => r.data);
+
+export const addCategoryToNote = (noteId: number, categoryId: number) =>
+  axios.put(`${API_NOTES}/${noteId}/categories/${categoryId}`);
+
+export const removeCategoryFromNote = (noteId: number, categoryId: number) =>
+  axios.delete(`${API_NOTES}/${noteId}/categories/${categoryId}`);
