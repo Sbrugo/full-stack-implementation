@@ -5,39 +5,80 @@ import {
   deleteNote,
   archiveNote,
   unarchiveNote,
-  updateNote, // Import updateNote
+  getAllCategories,
+  getNotesByCategory,
 } from "../services/api";
 import NoteForm from "../components/NoteForm";
 
-type Note = { id: number; title: string; content?: string };
+type Category = { id: number; name: string };
+type Note = {
+  id: number;
+  title: string;
+  content?: string;
+  categories: Category[];
+};
 
 export default function NotesPage() {
   const [activeNotes, setActiveNotes] = useState<Note[]>([]);
   const [archivedNotes, setArchivedNotes] = useState<Note[]>([]);
+  const [allCategories, setAllCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [isCreating, setIsCreating] = useState(false);
 
-  const loadNotes = async () => {
-    setLoading(true);
-    try {
-      const [active, archived] = await Promise.all([
-        getActiveNotes(),
-        getArchivedNotes(),
-      ]);
-      setActiveNotes(active);
-      setArchivedNotes(archived);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    loadNotes();
+    // Fetch all categories for the filter dropdown
+    const fetchCategories = async () => {
+      try {
+        const categories = await getAllCategories();
+        setAllCategories(categories);
+      } catch (error) {
+        console.error("Failed to fetch categories", error);
+      }
+    };
+    fetchCategories();
+    // Also load archived notes once
+    const fetchArchived = async () => {
+      try {
+        const archived = await getArchivedNotes();
+        setArchivedNotes(archived);
+      } catch (error) {
+        console.error("Failed to fetch archived notes", error);
+      }
+    };
+    fetchArchived();
   }, []);
 
+  useEffect(() => {
+    // Fetch active notes based on the selected category
+    const loadActiveNotes = async () => {
+      setLoading(true);
+      try {
+        const notes =
+          selectedCategory && selectedCategory !== "ALL"
+            ? await getNotesByCategory(selectedCategory)
+            : await getActiveNotes();
+        setActiveNotes(notes);
+      } catch (error) {
+        console.error("Failed to fetch active notes", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadActiveNotes();
+  }, [selectedCategory]);
+
   const handleSave = () => {
-    loadNotes();
+    // Refetch active notes after saving, respecting the filter
+    const reload = async () => {
+      const notes =
+        selectedCategory && selectedCategory !== "ALL"
+          ? await getNotesByCategory(selectedCategory)
+          : await getActiveNotes();
+      setActiveNotes(notes);
+    };
+    reload();
   };
 
   const handleCloseForm = () => {
@@ -75,6 +116,15 @@ export default function NotesPage() {
     }
   };
 
+  const categoryPillStyle: React.CSSProperties = {
+    display: "inline-block",
+    padding: "2px 8px",
+    margin: "2px",
+    borderRadius: "12px",
+    backgroundColor: "#e0e0e0",
+    fontSize: "12px",
+  };
+
   return (
     <div>
       <h1>Notas</h1>
@@ -88,6 +138,22 @@ export default function NotesPage() {
         />
       )}
 
+      <div>
+        <label htmlFor="category-filter">Filtrar por categoría: </label>
+        <select
+          id="category-filter"
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+        >
+          <option value="ALL">Todas</option>
+          {allCategories.map((c) => (
+            <option key={c.id} value={c.name}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {loading ? (
         <p>Cargando notas...</p>
       ) : (
@@ -99,6 +165,13 @@ export default function NotesPage() {
                 <li key={n.id}>
                   <strong>{n.title}</strong>
                   <p>{n.content}</p>
+                  <div>
+                    {n.categories.map((c) => (
+                      <span key={c.id} style={categoryPillStyle}>
+                        {c.name}
+                      </span>
+                    ))}
+                  </div>
                   <button onClick={() => setEditingNote(n)}>Editar</button>
                   <button onClick={() => handleArchive(n)}>Archivar</button>
                   <button onClick={() => handleDelete(n.id)}>Eliminar</button>
@@ -113,6 +186,13 @@ export default function NotesPage() {
                 <li key={n.id}>
                   <strong>{n.title}</strong>
                   <p>{n.content}</p>
+                  <div>
+                    {n.categories.map((c) => (
+                      <span key={c.id} style={categoryPillStyle}>
+                        {c.name}
+                      </span>
+                    ))}
+                  </div>
                   <button onClick={() => handleUnarchive(n)}>
                     Desarchivar
                   </button>
