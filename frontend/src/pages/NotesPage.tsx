@@ -5,7 +5,6 @@ import CategoryPill from "../components/CategoryPill";
 import type { Note } from "../types/Note";
 
 export default function NotesPage() {
-  // Consume the global state and functions from the context
   const {
     activeNotes,
     archivedNotes,
@@ -14,21 +13,14 @@ export default function NotesPage() {
     handleDelete,
     handleArchive,
     handleUnarchive,
-    selectedCategory, // Get filter state from context
-    setSelectedCategory, // Get filter setter from context
+    selectedCategory,
+    setSelectedCategory,
   } = useNotesContext();
 
-  // Local UI state - this remains in the component
+  // Local UI state for managing modals and selections
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [openNote, setOpenNote] = useState<Note | null>(null);
-
-  const handleSave = () => {
-    // The context's handleSaveNote will refresh the notes,
-    // so we just need to close the form.
-    setEditingNote(null);
-    setIsCreating(false);
-  };
 
   const handleCloseForm = () => {
     setEditingNote(null);
@@ -40,13 +32,9 @@ export default function NotesPage() {
       <h1 className="font-bold mb-6 tracking-tight leading-snug">Notes</h1>
       <button onClick={() => setIsCreating(true)}>Create note</button>
 
-      {/* The NoteForm will now get most of its logic from the context */}
+      {/* NoteForm only needs to know which note to edit (if any) and how to close itself */}
       {(isCreating || editingNote) && (
-        <NoteForm
-          noteToEdit={editingNote}
-          onSave={handleSave}
-          onClose={handleCloseForm}
-        />
+        <NoteForm noteToEdit={editingNote} onClose={handleCloseForm} />
       )}
 
       <div className="w-full flex gap-10 mt-10">

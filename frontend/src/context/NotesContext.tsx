@@ -3,8 +3,8 @@ import React, {
   useContext,
   useState,
   useEffect,
-  ReactNode,
   useCallback,
+  type ReactNode,
 } from "react";
 import * as api from "../services/api";
 import type { Note } from "../types/Note";
@@ -22,7 +22,11 @@ interface NotesContextType {
   handleUnarchive: (note: Note) => Promise<void>;
   handleSaveNote: (
     noteToEdit: Note | null,
-    data: { title: string; content: string; categories: Record<string, boolean> }
+    data: {
+      title: string;
+      content: string;
+      categories: Record<string, boolean>;
+    }
   ) => Promise<void>;
 }
 
@@ -71,6 +75,7 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
         ]);
         setArchivedNotes(archived);
         setAllCategories(categories);
+        console.log(archived);
       } catch (error) {
         console.error("Failed to load static data", error);
       }
@@ -110,7 +115,11 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
 
   const handleSaveNote = async (
     noteToEdit: Note | null,
-    data: { title: string; content: string; categories: Record<string, boolean> }
+    data: {
+      title: string;
+      content: string;
+      categories: Record<string, boolean>;
+    }
   ) => {
     const selectedCategoryIds = new Set(
       Object.keys(data.categories || {})
@@ -120,19 +129,25 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
 
     if (noteToEdit) {
       await api.updateNote(noteToEdit.id, data);
-      const originalCategoryIds = new Set(noteToEdit.categories.map((c) => c.id));
+      const originalCategoryIds = new Set(
+        noteToEdit.categories.map((c) => c.id)
+      );
       const promises: Promise<any>[] = [];
       selectedCategoryIds.forEach((id) => {
-        if (!originalCategoryIds.has(id)) promises.push(api.addCategoryToNote(noteToEdit.id, id));
+        if (!originalCategoryIds.has(id))
+          promises.push(api.addCategoryToNote(noteToEdit.id, id));
       });
       originalCategoryIds.forEach((id) => {
-        if (!selectedCategoryIds.has(id)) promises.push(api.removeCategoryFromNote(noteToEdit.id, id));
+        if (!selectedCategoryIds.has(id))
+          promises.push(api.removeCategoryFromNote(noteToEdit.id, id));
       });
       if (promises.length > 0) await Promise.all(promises);
     } else {
       const newNote = await api.createNote(data);
       if (newNote && newNote.id && selectedCategoryIds.size > 0) {
-        const promises = Array.from(selectedCategoryIds).map((catId) => api.addCategoryToNote(newNote.id, catId));
+        const promises = Array.from(selectedCategoryIds).map((catId) =>
+          api.addCategoryToNote(newNote.id, catId)
+        );
         await Promise.all(promises);
       }
     }
@@ -152,5 +167,7 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
     handleSaveNote,
   };
 
-  return <NotesContext.Provider value={value}>{children}</NotesContext.Provider>;
+  return (
+    <NotesContext.Provider value={value}>{children}</NotesContext.Provider>
+  );
 };

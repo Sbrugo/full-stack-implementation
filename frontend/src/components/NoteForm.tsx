@@ -33,7 +33,7 @@ export default function NoteForm({ noteToEdit, onClose }: NoteFormProps) {
 
   // The submit handler is now much simpler
   const onSubmit = async (data: NoteFormData) => {
-    await handleSaveNote(noteToEdit, data);
+    await handleSaveNote(noteToEdit || null, data);
     onClose(); // Close the form after saving
   };
 
