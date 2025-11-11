@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   getActiveNotes,
   getArchivedNotes,
@@ -9,6 +9,7 @@ import {
   getNotesByCategory,
 } from "../services/api";
 import NoteForm from "../components/NoteForm";
+import CategoryPill from "../components/CategoryPill";
 
 type Category = { id: number; name: string };
 type Note = {
@@ -26,13 +27,14 @@ export default function NotesPage() {
   const [loading, setLoading] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [openNote, setOpenNote] = useState<Note | null>(null);
 
   useEffect(() => {
-    // Fetch all categories for the filter dropdown
     const fetchCategories = async () => {
       try {
         const categories = await getAllCategories();
         setAllCategories(categories);
+        console.log(categories);
       } catch (error) {
         console.error("Failed to fetch categories", error);
       }
@@ -113,94 +115,107 @@ export default function NotesPage() {
     }
   };
 
-  const categoryPillStyle: React.CSSProperties = {
-    display: "inline-block",
-    padding: "2px 8px",
-    margin: "2px",
-    borderRadius: "12px",
-    backgroundColor: "#e0e0e0",
-    fontSize: "12px",
-  };
-
   return (
-    <div className="bg-black">
-      <h1>Notas</h1>
-      <button onClick={() => setIsCreating(true)}>Crear Nota</button>
+    <div className="w-full">
+      <h1 className="font-bold mb-6 tracking-tight leading-snug">Notes</h1>
+      <button onClick={() => setIsCreating(true)}>Create note</button>
+      <div className="w-full flex gap-10 mt-10">
+        <div id="sidenav" className="w-1/3 text-left">
+          {(isCreating || editingNote) && (
+            <NoteForm
+              noteToEdit={editingNote}
+              onSave={handleSave}
+              onClose={handleCloseForm}
+              allCategories={allCategories}
+            />
+          )}
 
-      {(isCreating || editingNote) && (
-        <NoteForm
-          noteToEdit={editingNote}
-          onSave={handleSave}
-          onClose={handleCloseForm}
-          allCategories={allCategories}
-        />
-      )}
+          <div>
+            <label htmlFor="category-filter">Filter categories: </label>
+            <select
+              id="category-filter"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              <option value="ALL">All</option>
+              {allCategories.map((c) => (
+                <option key={c.id} value={c.name}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-      <div>
-        <label htmlFor="category-filter">Filtrar por categoría: </label>
-        <select
-          id="category-filter"
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-        >
-          <option value="ALL">Todas</option>
-          {allCategories.map((c) => (
-            <option key={c.id} value={c.name}>
-              {c.name}
-            </option>
-          ))}
-        </select>
+          {loading ? (
+            <p>Loading notes...</p>
+          ) : (
+            <>
+              <section>
+                <h2 className="text-gray-300 font-bold text-xl">Active</h2>
+                <ul>
+                  {activeNotes.map((n) => (
+                    <li
+                      key={n.id}
+                      className="p-2 cursor-pointer flex items-center"
+                      onClick={() => setOpenNote(n)}
+                    >
+                      <strong className="mr-4">{n.title}</strong>
+                      {n.categories.map((c) => (
+                        <span key={c.id}>
+                          <CategoryPill name={c.name}></CategoryPill>
+                        </span>
+                      ))}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+              <section>
+                <h2 className="text-gray-300 font-bold text-xl">Archived</h2>
+                <ul>
+                  {archivedNotes.map((n) => (
+                    <li
+                      key={n.id}
+                      className="p-2 cursor-pointer"
+                      onClick={() => setOpenNote(n)}
+                    >
+                      <strong>{n.title}</strong>
+                      {n.categories.map((c) => (
+                        <span key={c.id}>
+                          <CategoryPill name={c.name}></CategoryPill>
+                        </span>
+                      ))}
+                      <button onClick={() => handleUnarchive(n)}>
+                        Unarchive
+                      </button>
+                      <button onClick={() => handleDelete(n.id)}>Trash</button>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            </>
+          )}
+        </div>
+        <div>
+          {openNote ? (
+            <>
+              <h2>{openNote.title}</h2>
+              <p>{openNote.content}</p>
+              <div>
+                {openNote.categories.map((c) => (
+                  <span key={c.id}>
+                    <CategoryPill name={c.name}></CategoryPill>
+                  </span>
+                ))}
+              </div>
+              <button onClick={() => setEditingNote(openNote)}>Edit</button>
+              <button onClick={() => handleArchive(openNote)}>Archive</button>
+              <button onClick={() => handleDelete(openNote.id)}>Trash</button>
+            </>
+          ) : (
+            <p>Seleccioná una nota para verla aquí</p>
+          )}
+        </div>
       </div>
-
-      {loading ? (
-        <p>Cargando notas...</p>
-      ) : (
-        <>
-          <section>
-            <h2>Activas</h2>
-            <ul>
-              {activeNotes.map((n) => (
-                <li key={n.id}>
-                  <strong>{n.title}</strong>
-                  <p>{n.content}</p>
-                  <div>
-                    {n.categories.map((c) => (
-                      <span key={c.id} style={categoryPillStyle}>
-                        {c.name}
-                      </span>
-                    ))}
-                  </div>
-                  <button onClick={() => setEditingNote(n)}>Editar</button>
-                  <button onClick={() => handleArchive(n)}>Archivar</button>
-                  <button onClick={() => handleDelete(n.id)}>Eliminar</button>
-                </li>
-              ))}
-            </ul>
-          </section>
-          <section>
-            <h2>Archivadas</h2>
-            <ul>
-              {archivedNotes.map((n) => (
-                <li key={n.id}>
-                  <strong>{n.title}</strong>
-                  <p>{n.content}</p>
-                  <div>
-                    {n.categories.map((c) => (
-                      <span key={c.id} style={categoryPillStyle}>
-                        {c.name}
-                      </span>
-                    ))}
-                  </div>
-                  <button onClick={() => handleUnarchive(n)}>
-                    Desarchivar
-                  </button>
-                  <button onClick={() => handleDelete(n.id)}>Eliminar</button>
-                </li>
-              ))}
-            </ul>
-          </section>
-        </>
-      )}
     </div>
   );
 }
