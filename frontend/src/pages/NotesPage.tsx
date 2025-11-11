@@ -1,83 +1,33 @@
-import { useEffect, useState } from "react";
-import {
-  getActiveNotes,
-  getArchivedNotes,
-  deleteNote,
-  archiveNote,
-  unarchiveNote,
-  getAllCategories,
-  getNotesByCategory,
-} from "../services/api";
+import { useState } from "react";
+import { useNotesContext } from "../context/NotesContext";
 import NoteForm from "../components/NoteForm";
 import CategoryPill from "../components/CategoryPill";
-
-type Category = { id: number; name: string };
-type Note = {
-  id: number;
-  title: string;
-  content?: string;
-  categories: Category[];
-};
+import type { Note } from "../types/Note";
 
 export default function NotesPage() {
-  const [activeNotes, setActiveNotes] = useState<Note[]>([]);
-  const [archivedNotes, setArchivedNotes] = useState<Note[]>([]);
-  const [allCategories, setAllCategories] = useState<Category[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const [loading, setLoading] = useState(false);
+  // Consume the global state and functions from the context
+  const {
+    activeNotes,
+    archivedNotes,
+    allCategories,
+    loading,
+    handleDelete,
+    handleArchive,
+    handleUnarchive,
+    selectedCategory, // Get filter state from context
+    setSelectedCategory, // Get filter setter from context
+  } = useNotesContext();
+
+  // Local UI state - this remains in the component
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [openNote, setOpenNote] = useState<Note | null>(null);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const categories = await getAllCategories();
-        setAllCategories(categories);
-        console.log(categories);
-      } catch (error) {
-        console.error("Failed to fetch categories", error);
-      }
-    };
-    fetchCategories();
-    const fetchArchived = async () => {
-      try {
-        const archived = await getArchivedNotes();
-        setArchivedNotes(archived);
-      } catch (error) {
-        console.error("Failed to fetch archived notes", error);
-      }
-    };
-    fetchArchived();
-  }, []);
-
-  useEffect(() => {
-    const loadActiveNotes = async () => {
-      setLoading(true);
-      try {
-        const notes =
-          selectedCategory && selectedCategory !== "ALL"
-            ? await getNotesByCategory(selectedCategory)
-            : await getActiveNotes();
-        setActiveNotes(notes);
-      } catch (error) {
-        console.error("Failed to fetch active notes", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadActiveNotes();
-  }, [selectedCategory]);
-
   const handleSave = () => {
-    const reload = async () => {
-      const notes =
-        selectedCategory && selectedCategory !== "ALL"
-          ? await getNotesByCategory(selectedCategory)
-          : await getActiveNotes();
-      setActiveNotes(notes);
-    };
-    reload();
+    // The context's handleSaveNote will refresh the notes,
+    // so we just need to close the form.
+    setEditingNote(null);
+    setIsCreating(false);
   };
 
   const handleCloseForm = () => {
@@ -85,51 +35,22 @@ export default function NotesPage() {
     setIsCreating(false);
   };
 
-  const handleDelete = async (id: number) => {
-    try {
-      await deleteNote(id);
-      setActiveNotes((prev) => prev.filter((n) => n.id !== id));
-      setArchivedNotes((prev) => prev.filter((n) => n.id !== id));
-    } catch (error) {
-      console.error("Failed to delete note", error);
-    }
-  };
-
-  const handleArchive = async (note: Note) => {
-    try {
-      await archiveNote(note.id);
-      setActiveNotes((prev) => prev.filter((n) => n.id !== note.id));
-      setArchivedNotes((prev) => [...prev, note]);
-    } catch (error) {
-      console.error("Failed to archive note", error);
-    }
-  };
-
-  const handleUnarchive = async (note: Note) => {
-    try {
-      await unarchiveNote(note.id);
-      setArchivedNotes((prev) => prev.filter((n) => n.id !== note.id));
-      setActiveNotes((prev) => [...prev, note]);
-    } catch (error) {
-      console.error("Failed to unarchive note", error);
-    }
-  };
-
   return (
     <div className="w-full">
       <h1 className="font-bold mb-6 tracking-tight leading-snug">Notes</h1>
       <button onClick={() => setIsCreating(true)}>Create note</button>
+
+      {/* The NoteForm will now get most of its logic from the context */}
+      {(isCreating || editingNote) && (
+        <NoteForm
+          noteToEdit={editingNote}
+          onSave={handleSave}
+          onClose={handleCloseForm}
+        />
+      )}
+
       <div className="w-full flex gap-10 mt-10">
         <div id="sidenav" className="w-1/3 text-left">
-          {(isCreating || editingNote) && (
-            <NoteForm
-              noteToEdit={editingNote}
-              onSave={handleSave}
-              onClose={handleCloseForm}
-              allCategories={allCategories}
-            />
-          )}
-
           <div>
             <label htmlFor="category-filter">Filter categories: </label>
             <select
@@ -184,10 +105,6 @@ export default function NotesPage() {
                           <CategoryPill name={c.name}></CategoryPill>
                         </span>
                       ))}
-                      <button onClick={() => handleUnarchive(n)}>
-                        Unarchive
-                      </button>
-                      <button onClick={() => handleDelete(n.id)}>Trash</button>
                     </li>
                   ))}
                 </ul>
@@ -195,24 +112,27 @@ export default function NotesPage() {
             </>
           )}
         </div>
-        <div>
+        <div className="w-2/3 text-left">
           {openNote ? (
             <>
-              <h2>{openNote.title}</h2>
-              <p>{openNote.content}</p>
-              <div>
+              <h2 className="font-bold text-2xl">{openNote.title}</h2>
+              <div className="flex my-4">
                 {openNote.categories.map((c) => (
                   <span key={c.id}>
                     <CategoryPill name={c.name}></CategoryPill>
                   </span>
                 ))}
               </div>
-              <button onClick={() => setEditingNote(openNote)}>Edit</button>
-              <button onClick={() => handleArchive(openNote)}>Archive</button>
-              <button onClick={() => handleDelete(openNote.id)}>Trash</button>
+              <p>{openNote.content}</p>
+
+              <div className="mt-6 flex gap-2">
+                <button onClick={() => setEditingNote(openNote)}>Edit</button>
+                <button onClick={() => handleArchive(openNote)}>Archive</button>
+                <button onClick={() => handleDelete(openNote.id)}>Trash</button>
+              </div>
             </>
           ) : (
-            <p>Seleccioná una nota para verla aquí</p>
+            <p>Select a note to see its details here.</p>
           )}
         </div>
       </div>

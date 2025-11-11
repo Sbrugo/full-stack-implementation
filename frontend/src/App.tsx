@@ -1,11 +1,14 @@
 import "./App.css";
+import { NotesProvider } from "./context/NotesContext";
 import NotesPage from "./pages/NotesPage";
 
 function App() {
   return (
-    <div className="bg-black min-h-screen">
-      <NotesPage />
-    </div>
+    <NotesProvider>
+      <div className="bg-black min-h-screen w-full">
+        <NotesPage />
+      </div>
+    </NotesProvider>
   );
 }
 

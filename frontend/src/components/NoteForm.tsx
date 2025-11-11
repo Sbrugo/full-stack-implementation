@@ -1,28 +1,17 @@
 import { useForm } from "react-hook-form";
-import {
-  createNote,
-  updateNote,
-  addCategoryToNote,
-  removeCategoryFromNote,
-} from "../services/api";
 import { useEffect } from "react";
+import { useNotesContext } from "../context/NotesContext";
 import type { Note } from "../types/Note";
-import type { Category } from "../types/Category";
 import type { NoteFormData } from "../types/NoteFormData";
 
 type NoteFormProps = {
-  onSave: () => void;
   noteToEdit?: Note | null;
   onClose: () => void;
-  allCategories: Category[];
 };
 
-export default function NoteForm({
-  onSave,
-  noteToEdit,
-  onClose,
-  allCategories,
-}: NoteFormProps) {
+export default function NoteForm({ noteToEdit, onClose }: NoteFormProps) {
+  // Get the save function and categories from the context
+  const { handleSaveNote, allCategories } = useNotesContext();
   const { register, handleSubmit, reset, setValue } = useForm<NoteFormData>();
 
   useEffect(() => {
@@ -38,61 +27,14 @@ export default function NoteForm({
       });
       setValue("categories", categoryCheckboxes);
     } else {
-      reset({ title: "", content: "" });
+      reset({ title: "", content: "", categories: {} });
     }
   }, [noteToEdit, allCategories, setValue, reset]);
 
+  // The submit handler is now much simpler
   const onSubmit = async (data: NoteFormData) => {
-    console.log(data);
-
-    const selectedCategoryIds = new Set(
-      Object.keys(data.categories || {})
-        .filter((id) => data.categories[id])
-        .map(Number)
-    );
-
-    if (noteToEdit) {
-      await updateNote(noteToEdit.id, {
-        title: data.title,
-        content: data.content,
-      });
-
-      const originalCategoryIds = new Set(
-        noteToEdit.categories.map((c) => c.id)
-      );
-      const promises: Promise<any>[] = [];
-
-      selectedCategoryIds.forEach((id) => {
-        if (!originalCategoryIds.has(id)) {
-          promises.push(addCategoryToNote(noteToEdit.id, id));
-        }
-      });
-
-      originalCategoryIds.forEach((id) => {
-        if (!selectedCategoryIds.has(id)) {
-          promises.push(removeCategoryFromNote(noteToEdit.id, id));
-        }
-      });
-
-      if (promises.length > 0) {
-        await Promise.all(promises);
-      }
-    } else {
-      const newNote = await createNote({
-        title: data.title,
-        content: data.content,
-      });
-
-      if (newNote && newNote.id && selectedCategoryIds.size > 0) {
-        const promises = Array.from(selectedCategoryIds).map((catId) =>
-          addCategoryToNote(newNote.id, catId)
-        );
-        await Promise.all(promises);
-      }
-    }
-
-    onSave();
-    onClose();
+    await handleSaveNote(noteToEdit, data);
+    onClose(); // Close the form after saving
   };
 
   return (

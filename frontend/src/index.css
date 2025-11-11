@@ -41,7 +41,6 @@ h1 {
 
 button {
   border-radius: 8px;
-  border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
@@ -49,9 +48,12 @@ button {
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
+  height: fit-content;
+  width: fit-content;
 }
 button:hover {
-  border-color: #646cff;
+  background-color: #cbcdf4;
+  color: rgb(71, 70, 70);
 }
 button:focus,
 button:focus-visible {
