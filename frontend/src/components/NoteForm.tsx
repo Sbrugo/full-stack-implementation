@@ -10,7 +10,6 @@ type NoteFormProps = {
 };
 
 export default function NoteForm({ noteToEdit, onClose }: NoteFormProps) {
-  // Get the save function and categories from the context
   const { handleSaveNote, allCategories } = useNotesContext();
   const { register, handleSubmit, reset, setValue } = useForm<NoteFormData>();
 
@@ -31,10 +30,9 @@ export default function NoteForm({ noteToEdit, onClose }: NoteFormProps) {
     }
   }, [noteToEdit, allCategories, setValue, reset]);
 
-  // The submit handler is now much simpler
   const onSubmit = async (data: NoteFormData) => {
     await handleSaveNote(noteToEdit || null, data);
-    onClose(); // Close the form after saving
+    onClose();
   };
 
   return (

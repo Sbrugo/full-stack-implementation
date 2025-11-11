@@ -6,11 +6,11 @@ const CategoryPill: React.FC<CategoryPillProps> = ({ name }) => {
   const getColor = () => {
     switch (name.toLowerCase()) {
       case "work":
-        return "#FFA500";
+        return "#BBCB50";
       case "personal":
-        return "#B2FFFF";
+        return "#D49BAE";
       case "ideas":
-        return "#FFFF00";
+        return "#678CEC";
       default:
         return "";
     }
@@ -20,7 +20,7 @@ const CategoryPill: React.FC<CategoryPillProps> = ({ name }) => {
 
   return (
     <div
-      className="h-fit w-fit m-2 border rounded-lg border-transparent text-xs text-black"
+      className="h-fit w-fit border rounded-lg border-transparent text-xs text-black"
       style={{
         backgroundColor: color,
         padding: "1.5px 6px",
