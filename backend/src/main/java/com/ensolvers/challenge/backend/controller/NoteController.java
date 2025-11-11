@@ -52,7 +52,7 @@ public class NoteController {
         service.unarchive(id);
     }
 
-    @PutMapping("/{nodeId}/categories/{categoryId}")
+    @PutMapping("/{noteId}/categories/{categoryId}")
     public void addCategory(@PathVariable Long noteId, @PathVariable Long categoryId){
         categoryService.addCategoryToNote(noteId, categoryId);
     }
