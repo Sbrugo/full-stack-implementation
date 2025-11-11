@@ -25,7 +25,6 @@ interface NotesContextType {
     data: {
       title: string;
       content: string;
-      categories: Record<string, boolean>;
     }
   ) => Promise<void>;
 }
@@ -75,7 +74,6 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
         ]);
         setArchivedNotes(archived);
         setAllCategories(categories);
-        console.log(archived);
       } catch (error) {
         console.error("Failed to load static data", error);
       }
@@ -128,22 +126,35 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
     );
 
     if (noteToEdit) {
-      await api.updateNote(noteToEdit.id, data);
+      await api.updateNote(noteToEdit.id, {
+        title: data.title,
+        content: data.content,
+      });
+
       const originalCategoryIds = new Set(
         noteToEdit.categories.map((c) => c.id)
       );
       const promises: Promise<any>[] = [];
+
       selectedCategoryIds.forEach((id) => {
-        if (!originalCategoryIds.has(id))
+        if (!originalCategoryIds.has(id)) {
           promises.push(api.addCategoryToNote(noteToEdit.id, id));
+        }
       });
+
       originalCategoryIds.forEach((id) => {
-        if (!selectedCategoryIds.has(id))
+        if (!selectedCategoryIds.has(id)) {
           promises.push(api.removeCategoryFromNote(noteToEdit.id, id));
+        }
       });
+
       if (promises.length > 0) await Promise.all(promises);
     } else {
-      const newNote = await api.createNote(data);
+      const newNote = await api.createNote({
+        title: data.title,
+        content: data.content,
+      });
+
       if (newNote && newNote.id && selectedCategoryIds.size > 0) {
         const promises = Array.from(selectedCategoryIds).map((catId) =>
           api.addCategoryToNote(newNote.id, catId)
@@ -151,6 +162,7 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
         await Promise.all(promises);
       }
     }
+
     await reloadActiveNotes();
   };
 

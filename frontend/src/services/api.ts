@@ -16,7 +16,8 @@ export const createNote = (note: NoteData) =>
 export const updateNote = (id: number, note: NoteData) =>
   axios.put(`${API_NOTES}/${id}`, note).then((r) => r.data);
 export const deleteNote = (id: number) => axios.delete(`${API_NOTES}/${id}`);
-export const archiveNote = (id: number) => axios.put(`${API_NOTES}/${id}/archive`);
+export const archiveNote = (id: number) =>
+  axios.put(`${API_NOTES}/${id}/archive`);
 export const unarchiveNote = (id: number) =>
   axios.put(`${API_NOTES}/${id}/unarchive`);
 
