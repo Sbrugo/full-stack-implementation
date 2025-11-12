@@ -8,7 +8,6 @@ import Sidebar from "../components/Sidebar";
 export default function NotesPage() {
   const { handleDelete, handleArchive, handleUnarchive } = useNotesContext();
 
-  // Local UI state for managing modals and selections
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [openNote, setOpenNote] = useState<Note | null>(null);
@@ -30,9 +29,9 @@ export default function NotesPage() {
         )}
 
         {!isCreating && !editingNote && (
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-2xl">
             {openNote ? (
-              <div>
+              <div className="p-6 flex flex-col items-center">
                 <h2 className="text-3xl font-semibold mb-4">
                   {openNote.title}
                 </h2>
