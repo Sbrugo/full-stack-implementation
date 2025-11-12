@@ -82,7 +82,9 @@ export default function NoteForm({ noteToEdit, onClose }: NoteFormProps) {
             ))}
           </fieldset>
           <div className="flex gap-2 mt-8">
-            <button type="submit">{noteToEdit ? "Save" : "Create"}</button>
+            <button type="submit" className="text-gray-400">
+              {noteToEdit ? "Save" : "Create"}
+            </button>
             <button
               type="button"
               onClick={onClose}

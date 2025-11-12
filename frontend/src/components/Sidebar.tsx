@@ -1,6 +1,7 @@
 import { useNotesContext } from "../context/NotesContext";
 import type { Note } from "../types/Note";
 import CategoryPill from "./CategoryPill";
+import TagFilter from "./TagFilter";
 
 type SidebarProps = {
   setOpenNote: React.Dispatch<React.SetStateAction<Note | null>>;
@@ -8,19 +9,12 @@ type SidebarProps = {
 };
 
 const Sidebar = ({ setOpenNote, setIsCreating }: SidebarProps) => {
-  const {
-    allCategories,
-    selectedCategory,
-    setSelectedCategory,
-    loading,
-    activeNotes,
-    archivedNotes,
-  } = useNotesContext();
+  const { loading, activeNotes, archivedNotes } = useNotesContext();
 
   return (
-    <aside className="w-full bg-neutral-100 md:w-1/3 border-r border-neutral-200 p-6 md:p-8 flex flex-col">
+    <aside className="bg-neutral-100 w-1/3 border-r border-neutral-200 p-6 md:p-8 flex flex-col">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight">Notes</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Note</h1>
         <button
           onClick={() => setIsCreating(true)}
           className="px-3 py-1.5 text-sm rounded-md bg-black text-white hover:bg-neutral-800 transition-colors"
@@ -29,28 +23,7 @@ const Sidebar = ({ setOpenNote, setIsCreating }: SidebarProps) => {
         </button>
       </div>
 
-      {/* Category Filter */}
-      <div className="mb-6">
-        <label
-          htmlFor="category-filter"
-          className="text-sm font-medium text-neutral-500 mb-2 block"
-        >
-          Filter by category
-        </label>
-        <select
-          id="category-filter"
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className="w-full border border-neutral-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-300 bg-white"
-        >
-          <option value="ALL">All</option>
-          {allCategories.map((c) => (
-            <option key={c.id} value={c.name}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-      </div>
+      <TagFilter />
 
       <div className="overflow-y-auto flex-1">
         {loading ? (

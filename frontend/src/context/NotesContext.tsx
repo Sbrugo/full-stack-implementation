@@ -20,11 +20,13 @@ interface NotesContextType {
   handleDelete: (id: number) => Promise<void>;
   handleArchive: (note: Note) => Promise<void>;
   handleUnarchive: (note: Note) => Promise<void>;
+  handleAddCategory: (name: string) => Promise<void>;
   handleSaveNote: (
     noteToEdit: Note | null,
     data: {
       title: string;
       content: string;
+      categories: Record<string, boolean>;
     }
   ) => Promise<void>;
 }
@@ -45,6 +47,19 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
   const [allCategories, setAllCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
+  const [filteredArchivedNotes, setFilteredArchivedNotes] = useState<Note[]>(
+    []
+  );
+
+  useEffect(() => {
+    const filtered =
+      selectedCategory === "ALL"
+        ? archivedNotes
+        : archivedNotes.filter((note) =>
+            note.categories.some((c) => c.name === selectedCategory)
+          );
+    setFilteredArchivedNotes(filtered);
+  }, [selectedCategory, archivedNotes]);
 
   const reloadActiveNotes = useCallback(async () => {
     setLoading(true);
@@ -60,6 +75,15 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     }
   }, [selectedCategory]);
+
+  const reloadCategories = useCallback(async () => {
+    try {
+      const categories = await api.getAllCategories();
+      setAllCategories(categories);
+    } catch (error) {
+      console.error("Failed to load categories", error);
+    }
+  }, []);
 
   useEffect(() => {
     reloadActiveNotes();
@@ -108,6 +132,15 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
       setActiveNotes((prev) => [...prev, note]);
     } catch (error) {
       console.error("Failed to unarchive note", error);
+    }
+  };
+
+  const handleAddCategory = async (name: string) => {
+    try {
+      await api.addCategory(name);
+      await reloadCategories();
+    } catch (error) {
+      console.error("Failed to add category", error);
     }
   };
 
@@ -168,7 +201,7 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
 
   const value = {
     activeNotes,
-    archivedNotes,
+    archivedNotes: filteredArchivedNotes,
     allCategories,
     loading,
     selectedCategory,
@@ -176,6 +209,7 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
     handleDelete,
     handleArchive,
     handleUnarchive,
+    handleAddCategory,
     handleSaveNote,
   };
 
