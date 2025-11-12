@@ -8,7 +8,7 @@ const CategoryPill: React.FC<CategoryPillProps> = ({ name }) => {
       case "work":
         return "#BBCB50";
       case "personal":
-        return "#D49BAE";
+        return "oklch(90.2% 0.063 306.703)";
       case "ideas":
         return "#678CEC";
       default:
