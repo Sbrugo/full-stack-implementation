@@ -1,6 +1,6 @@
 # Notes Application Challenge
 
-This repository contains a full-stack note-taking web application built as a technical challenge for Ensolvers.
+This repository contains a full-stack note-taking web application built as a technical challenge for an interview.
 
 The application allows users to create, edit, delete, archive, and categorize their notes. The frontend is a Single Page Application (SPA) built with React, and the backend is a REST API built with Spring Boot.
 
