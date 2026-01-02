@@ -77,3 +77,7 @@ The first time the backend runs, it will automatically seed the database with so
 - `docker-compose.yml`: Defines the services, networks, and volumes for Docker.
 - `run.sh`: A convenience script to start the application.
 - `CHALLENGE.md`: The original challenge description.
+
+## Demo
+<img width="1432" height="698" alt="Captura de pantalla 2026-01-02 a la(s) 8 19 21 p  m" src="https://github.com/user-attachments/assets/041b3d84-a771-43e5-bd2b-71757ca1991a" />
+
