@@ -4,29 +4,37 @@ This repository contains a full-stack note-taking web application built as a tec
 
 The application allows users to create, edit, delete, archive, and categorize their notes. The frontend is a Single Page Application (SPA) built with React, and the backend is a REST API built with Spring Boot.
 
-## Technologies Used
+## Technology Stack & Tooling
 
 ### Backend
 
-- **Java:** 17
-- **Spring Boot:** 3.5.7
-- **Database:** PostgreSQL
-- **Build Tool:** Maven
+- **Java 17** — Core language
+- **Spring Boot 3.5.7** — REST API and application configuration
+- **PostgreSQL** — Relational database for persistent storage
+- **Maven** — Dependency management and build automation
 
 ### Frontend
 
-- **Node.js:** 18.x
-- **Package Manager:** npm
-- **Framework:** React 19.2.0
-- **Build Tool:** Vite 7.2.2
-- **Language:** TypeScript 5.9.3
-- **Styling:** Tailwind CSS 3.4.18
-- **HTTP Client:** Axios 1.13.2
+- **React 19 (TypeScript)** — Single Page Application
+- **Vite** — Frontend build tool
+- **Tailwind CSS** — Styling
+- **Axios** — API communication
 
 ### Environment & Orchestration
 
-- **Containerization:** Docker
-- **Orchestration:** Docker Compose
+- **Docker** — Application containerization
+- **Docker Compose** — Multi-service local environment (frontend, backend, database)
+
+
+### Architecture Overview
+
+The application is structured as a decoupled frontend and backend system.
+The frontend consumes a REST API exposed by the backend, which handles business logic, data persistence, and validation.
+The system is containerized using Docker to ensure consistent local development and reproducible environments.
+
+### API Overview 
+
+The backend exposes REST endpoints to manage notes and categories, including creation, update, deletion, archiving, and filtering.
 
 ## Prerequisites
 
