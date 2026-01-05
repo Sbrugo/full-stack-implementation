@@ -6,11 +6,13 @@ The project focuses on implementing a clear frontend–backend separation, reali
 
 The application allows users to create, edit, delete, archive, and categorize notes. The frontend is a Single Page Application (SPA) built with React, while the backend is a REST API built with Spring Boot.
 
+While this is a full stack application, the project places particular emphasis on backend API design, validation, and clear contracts between layers.
+
 ---
 
 ## Purpose
 
-The goal of this project is not only to deliver a working application, but to demonstrate how a frontend client interacts with a structured backend API, following common patterns used in real-world full stack systems.
+The goal of this project is not only to deliver a working application, but to demonstrate production-oriented full stack design and API-driven development.
 
 The implementation emphasizes:
 - Clear separation of responsibilities between frontend and backend
