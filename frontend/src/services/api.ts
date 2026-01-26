@@ -1,7 +1,8 @@
 import axios from "axios";
 
-const API_NOTES = "http://localhost:8080/api/notes";
-const API_CATEGORIES = "http://localhost:8080/api/categories";
+const API_NOTES = "https://full-stack-implementation-backend.onrender.com/api";
+const API_CATEGORIES =
+  "https://full-stack-implementation-backend.onrender.com/api/categories";
 
 type NoteData = { title: string; content: string };
 
