@@ -1,79 +1,129 @@
-# Notes Application Challenge
+# Notes Application — Full Stack Implementation
 
 This repository contains a full-stack note-taking web application built as a technical challenge for an interview.
 
-The application allows users to create, edit, delete, archive, and categorize their notes. The frontend is a Single Page Application (SPA) built with React, and the backend is a REST API built with Spring Boot.
+The project focuses on implementing a clear frontend–backend separation, realistic API consumption, and a reproducible local development environment.
 
-## Technologies Used
+The application allows users to create, edit, delete, archive, and categorize notes. The frontend is a Single Page Application (SPA) built with React, while the backend is a REST API built with Spring Boot.
+
+While this is a full stack application, the project places particular emphasis on backend API design, validation, and clear contracts between layers.
+
+---
+
+## Purpose
+
+The goal of this project is not only to deliver a working application, but to demonstrate production-oriented full stack design and API-driven development.
+
+The implementation emphasizes:
+- Clear separation of responsibilities between frontend and backend
+- Explicit data validation and API contracts
+- A reproducible environment using containerization
+
+---
+
+## Technology Stack
 
 ### Backend
 
-- **Java:** 17
-- **Spring Boot:** 3.5.7
-- **Database:** PostgreSQL
-- **Build Tool:** Maven
+- **Java 17** — Core language
+- **Spring Boot 3.5.7** — REST API and application configuration
+- **PostgreSQL** — Relational database
+- **Maven** — Dependency management and build automation
 
 ### Frontend
 
-- **Node.js:** 18.x
-- **Package Manager:** npm
-- **Framework:** React 19.2.0
-- **Build Tool:** Vite 7.2.2
-- **Language:** TypeScript 5.9.3
-- **Styling:** Tailwind CSS 3.4.18
-- **HTTP Client:** Axios 1.13.2
+- **React 19 (TypeScript)** — Single Page Application
+- **Vite** — Frontend build tool
+- **Tailwind CSS** — Styling
+- **Axios** — HTTP client for API communication
 
 ### Environment & Orchestration
 
-- **Containerization:** Docker
-- **Orchestration:** Docker Compose
+- **Docker** — Application containerization
+- **Docker Compose** — Multi-service local development environment (frontend, backend, database)
+
+---
+
+## Architecture Overview
+
+The application is structured as a decoupled system:
+
+- The backend exposes a REST API responsible for business logic, validation, and data persistence.
+- The frontend consumes the API and handles UI state and user interactions.
+- Communication between layers happens exclusively through HTTP using well-defined request and response models.
+
+This structure mirrors common production setups where frontend and backend evolve independently.
+
+---
+
+## API Overview
+
+The backend exposes REST endpoints to manage notes and categories, including:
+
+- Creation and update of notes
+- Archiving and deletion
+- Categorization and filtering
+
+Validation is handled at the API level to ensure data consistency regardless of the client.
+
+---
 
 ## Prerequisites
 
-Before you begin, ensure you have the following installed on your system:
+Before running the application, ensure you have:
 
-- **Docker** and **Docker Compose** (Docker Desktop is the easiest way to get both).
-  Steps:
+- **Docker** and **Docker Compose** installed  
+  (Docker Desktop is the recommended option)
 
-1. Download Docker Desktop
-2. Run docker --version
-   docker-compose --version
+Verify installation:
 
-## How to Run the Application
+```bash
+docker --version
+docker-compose --version
+```
 
-The entire application can be started using a single command thanks to the provided shell script and Docker Compose setup.
+# Running the Application
 
-1.  **Clone the repository:**
+The entire system can be started using a single command thanks to Docker Compose and a helper script.
 
-    ```bash
-    git clone <repository-url>
-    cd <repository-directory>
-    ```
+1. **Clone the repository:**
 
-2.  **Make the run script executable (if necessary):**
+```bash
+git clone <repository-url>
+cd <repository-directory>
+```
 
-    ```bash
-    chmod +x run.sh
-    ```
+2. **Make the run script executable (if necessary):**
+```bash
+chmod +x run.sh
+```
 
-3.  **Run the application:**
-    ```bash
-    ./run.sh
-    ```
+3. **Start the application**
+```bash
+./run.sh
+```
+This will:
 
-This script will perform the following actions:
+Build Docker images for the frontend and backend
 
-- It uses `docker-compose up` to build the Docker images for both the `backend` and `frontend` services.
-- It starts the containers for the backend, frontend, and a PostgreSQL database.
-- The backend will be available at `http://localhost:8080`.
-- The frontend will be available at `http://localhost:5173`.
+Start the frontend, backend, and PostgreSQL database containers
 
-The first time the backend runs, it will automatically seed the database with some sample categories and notes if the database is empty.
+Seed the database with sample data on first run (if empty)
+
+## Once running:
+
+Backend: http://localhost:8080
+Frontend: http://localhost:5173
 
 ## Project Structure
 
-- `/backend`: Contains the Spring Boot REST API.
-- `/frontend`: Contains the React SPA.
-- `docker-compose.yml`: Defines the services, networks, and volumes for Docker.
-- `run.sh`: A convenience script to start the application.
-- `CHALLENGE.md`: The original challenge description.
+/backend — Spring Boot REST API
+/frontend — React SPA
+docker-compose.yml — Service definitions and networking
+run.sh — Convenience script to start the system
+
+CHALLENGE.md — Original challenge description
+
+## Demo 
+<img width="1432" height="698" alt="Captura de pantalla 2026-01-02 a la(s) 8 19 21 p  m" src="https://github.com/user-attachments/assets/1c725112-cfa6-4802-9d0f-bb3e8f543dc4" />
+
