@@ -1,4 +1,5 @@
 package com.ensolvers.challenge.backend.service;
+import com.ensolvers.challenge.backend.dto.NoteDTO;
 import com.ensolvers.challenge.backend.model.Note;
 import com.ensolvers.challenge.backend.repository.NoteRepository;
 import org.springframework.stereotype.Service;
@@ -20,11 +21,14 @@ public class NoteService {
         return repo.findByArchived(true);
     }
 
-    public Note create(Note note) {
+    public Note create(NoteDTO noteDTO) {
+        Note note = new Note();
+        note.setTitle(noteDTO.getTitle());
+        note.setContent(noteDTO.getContent());
         return repo.save(note);
     }
 
-    public Note update(Long id, Note updated) {
+    public Note update(Long id, NoteDTO updated) {
         Note note = repo.findById(id).orElseThrow();
         note.setTitle(updated.getTitle());
         note.setContent(updated.getContent());

@@ -1,7 +1,9 @@
 package com.ensolvers.challenge.backend.controller;
+import com.ensolvers.challenge.backend.dto.NoteDTO;
 import com.ensolvers.challenge.backend.model.Note;
 import com.ensolvers.challenge.backend.service.CategoryService;
 import com.ensolvers.challenge.backend.service.NoteService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -28,13 +30,13 @@ public class NoteController {
     }
 
     @PostMapping
-    public Note create(@RequestBody Note note) {
-        return service.create(note);
+    public Note create(@Valid @RequestBody NoteDTO noteDTO) {
+        return service.create(noteDTO);
     }
 
     @PutMapping("/{id}")
-    public Note update(@PathVariable Long id, @RequestBody Note note) {
-        return service.update(id, note);
+    public Note update(@PathVariable Long id, @Valid @RequestBody NoteDTO noteDTO) {
+        return service.update(id, noteDTO);
     }
 
     @DeleteMapping("/{id}")
