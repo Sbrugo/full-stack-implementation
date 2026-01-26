@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API_NOTES = "https://full-stack-implementation.onrender.com/api/notes";
 const API_CATEGORIES =
-  "https://full-stack-implementation-backend.onrender.com/api/categories";
+  "https://full-stack-implementation.onrender.com/api/categories";
 
 type NoteData = { title: string; content: string };
 
