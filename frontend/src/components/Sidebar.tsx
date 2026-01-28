@@ -44,7 +44,11 @@ const Sidebar = ({ setOpenNote, setIsCreating }: SidebarProps) => {
                     <span className="font-medium truncate mr-5">{n.title}</span>
                     <div className="flex gap-1 fjustify-end">
                       {n.categories.map((c) => (
-                        <CategoryPill key={c.id} name={c.name} />
+                        <CategoryPill
+                          key={c.id}
+                          name={c.name}
+                          color={c.color}
+                        />
                       ))}
                     </div>
                   </li>
@@ -66,7 +70,11 @@ const Sidebar = ({ setOpenNote, setIsCreating }: SidebarProps) => {
                     <span className="font-medium truncate mr-5">{n.title}</span>
                     <div className="flex gap-1 justify-end">
                       {n.categories.map((c) => (
-                        <CategoryPill key={c.id} name={c.name} />
+                        <CategoryPill
+                          key={c.id}
+                          name={c.name}
+                          color={c.color}
+                        />
                       ))}
                     </div>
                   </li>

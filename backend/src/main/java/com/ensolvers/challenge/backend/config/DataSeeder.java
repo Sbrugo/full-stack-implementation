@@ -4,6 +4,7 @@ import com.ensolvers.challenge.backend.model.Category;
 import com.ensolvers.challenge.backend.model.Note;
 import com.ensolvers.challenge.backend.repository.CategoryRepository;
 import com.ensolvers.challenge.backend.repository.NoteRepository;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
