@@ -20,7 +20,6 @@ export default function NotesPage() {
   return (
     <div className="min-h-screen bg-neutral-50 text-neutral-800 flex flex-col md:flex-row transition-all">
       <Sidebar setOpenNote={setOpenNote} setIsCreating={setIsCreating} />
-      {/* Main content */}
       <main className="flex-1 p-6 md:p-10 overflow-y-auto">
         {(isCreating || editingNote) && (
           <div className="max-w-xl mx-auto">
@@ -37,7 +36,7 @@ export default function NotesPage() {
                 </h2>
                 <div className="flex gap-2 mb-6 flex-wrap">
                   {openNote.categories.map((c) => (
-                    <CategoryPill key={c.id} name={c.name} />
+                    <CategoryPill key={c.id} name={c.name} color={c.color} />
                   ))}
                 </div>
                 <p className="text-neutral-700 whitespace-pre-line">

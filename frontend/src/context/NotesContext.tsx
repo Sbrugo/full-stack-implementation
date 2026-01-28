@@ -20,14 +20,17 @@ interface NotesContextType {
   handleDelete: (id: number) => Promise<void>;
   handleArchive: (note: Note) => Promise<void>;
   handleUnarchive: (note: Note) => Promise<void>;
-  handleAddCategory: (name: string) => Promise<void>;
+  handleAddCategory: (category: {
+    name: string;
+    color: string;
+  }) => Promise<void>;
   handleSaveNote: (
     noteToEdit: Note | null,
     data: {
       title: string;
       content: string;
       categories: Record<string, boolean>;
-    }
+    },
   ) => Promise<void>;
 }
 
@@ -48,7 +51,7 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
   const [filteredArchivedNotes, setFilteredArchivedNotes] = useState<Note[]>(
-    []
+    [],
   );
 
   useEffect(() => {
@@ -56,7 +59,7 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
       selectedCategory === "ALL"
         ? archivedNotes
         : archivedNotes.filter((note) =>
-            note.categories.some((c) => c.name === selectedCategory)
+            note.categories.some((c) => c.name === selectedCategory),
           );
     setFilteredArchivedNotes(filtered);
   }, [selectedCategory, archivedNotes]);
@@ -135,9 +138,12 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleAddCategory = async (name: string) => {
+  const handleAddCategory = async (category: {
+    name: string;
+    color: string;
+  }) => {
     try {
-      await api.addCategory(name);
+      await api.addCategory(category);
       await reloadCategories();
     } catch (error) {
       console.error("Failed to add category", error);
@@ -150,12 +156,12 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
       title: string;
       content: string;
       categories: Record<string, boolean>;
-    }
+    },
   ) => {
     const selectedCategoryIds = new Set(
       Object.keys(data.categories || {})
         .filter((id) => data.categories[id])
-        .map(Number)
+        .map(Number),
     );
 
     if (noteToEdit) {
@@ -165,7 +171,7 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
       });
 
       const originalCategoryIds = new Set(
-        noteToEdit.categories.map((c) => c.id)
+        noteToEdit.categories.map((c) => c.id),
       );
       const promises: Promise<any>[] = [];
 
@@ -190,7 +196,7 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
 
       if (newNote && newNote.id && selectedCategoryIds.size > 0) {
         const promises = Array.from(selectedCategoryIds).map((catId) =>
-          api.addCategoryToNote(newNote.id, catId)
+          api.addCategoryToNote(newNote.id, catId),
         );
         await Promise.all(promises);
       }

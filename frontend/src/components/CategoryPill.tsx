@@ -1,22 +1,23 @@
 interface CategoryPillProps {
   name: string;
+  color: string;
 }
 
-const CategoryPill: React.FC<CategoryPillProps> = ({ name }) => {
-  const getColor = () => {
-    switch (name.toLowerCase()) {
-      case "work":
-        return "#BBCB50";
-      case "personal":
-        return "oklch(90.2% 0.063 306.703)";
-      case "ideas":
-        return "#678CEC";
-      default:
-        return "";
-    }
-  };
+const CategoryPill: React.FC<CategoryPillProps> = ({ name, color }) => {
+  // const getColor = () => {
+  //   switch (name.toLowerCase()) {
+  //     case "work":
+  //       return "#BBCB50";
+  //     case "personal":
+  //       return "oklch(90.2% 0.063 306.703)";
+  //     case "ideas":
+  //       return "#678CEC";
+  //     default:
+  //       return "";
+  //   }
+  // };
 
-  const color = getColor();
+  // const color = getColor();
 
   return (
     <div

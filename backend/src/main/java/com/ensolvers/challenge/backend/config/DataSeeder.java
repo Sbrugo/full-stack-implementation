@@ -31,12 +31,15 @@ public class DataSeeder implements CommandLineRunner {
     private void loadSeedData() {
         Category catPersonal = new Category();
         catPersonal.setName("Personal");
+        catPersonal.setColor("oklch(90.2% 0.063 306.703)");
 
         Category catWork = new Category();
         catWork.setName("Work");
+        catWork.setColor("#BBCB50");
 
         Category catIdeas = new Category();
         catIdeas.setName("Ideas");
+        catIdeas.setColor("#678CEC");
 
         categoryRepository.saveAll(Arrays.asList(catPersonal, catWork, catIdeas));
 

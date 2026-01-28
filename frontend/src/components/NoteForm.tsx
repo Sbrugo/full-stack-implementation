@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useNotesContext } from "../context/NotesContext";
 import type { Note } from "../types/Note";
 import type { NoteFormData } from "../types/NoteFormData";
+import CategoryForm from "./CategoryForm";
 
 type NoteFormProps = {
   noteToEdit?: Note | null;
@@ -18,7 +19,7 @@ export default function NoteForm({ noteToEdit, onClose }: NoteFormProps) {
       setValue("title", noteToEdit.title);
       setValue("content", noteToEdit.content || "");
       const existingCategoryIds = new Set(
-        noteToEdit.categories.map((c) => c.id)
+        noteToEdit.categories.map((c) => c.id),
       );
       const categoryCheckboxes: Record<string, boolean> = {};
       allCategories.forEach((cat) => {
@@ -81,6 +82,7 @@ export default function NoteForm({ noteToEdit, onClose }: NoteFormProps) {
               </div>
             ))}
           </fieldset>
+          <CategoryForm />
           <div className="flex gap-2 mt-8">
             <button type="submit" className="text-gray-400">
               {noteToEdit ? "Save" : "Create"}

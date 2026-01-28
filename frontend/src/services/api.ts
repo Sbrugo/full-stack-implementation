@@ -5,6 +5,7 @@ const API_CATEGORIES =
   "https://full-stack-implementation.onrender.com/api/categories";
 
 type NoteData = { title: string; content: string };
+type CategoryData = { name: string; color: string };
 
 export const getActiveNotes = () =>
   axios.get(`${API_NOTES}/active`).then((r) => r.data);
@@ -29,8 +30,8 @@ export const archiveNote = (id: number) =>
 export const unarchiveNote = (id: number) =>
   axios.put(`${API_NOTES}/${id}/unarchive`);
 
-export const addCategory = (name: string) =>
-  axios.post(API_CATEGORIES, { name }).then((r) => r.data);
+export const addCategory = (category: CategoryData) =>
+  axios.post(API_CATEGORIES, category).then((r) => r.data);
 
 export const getAllCategories = () =>
   axios.get(API_CATEGORIES).then((r) => r.data);
