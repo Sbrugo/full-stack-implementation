@@ -1,21 +1,8 @@
-import { useState } from "react";
 import { useNotesContext } from "../context/NotesContext";
 
 const TagFilter = () => {
-  const {
-    allCategories,
-    selectedCategory,
-    setSelectedCategory,
-    handleAddCategory,
-  } = useNotesContext();
-  const [newCategory, setNewCategory] = useState("");
-
-  const handleAdd = () => {
-    if (newCategory.trim() !== "") {
-      handleAddCategory(newCategory);
-      setNewCategory("");
-    }
-  };
+  const { allCategories, selectedCategory, setSelectedCategory } =
+    useNotesContext();
 
   return (
     <div className="mb-6">
@@ -39,30 +26,6 @@ const TagFilter = () => {
             </option>
           ))}
         </select>
-      </div>
-      <div className="mt-4 flex justify-between items-center">
-        <label
-          htmlFor="new-category"
-          className="text-sm font-medium text-neutral-500 mb-2 block"
-        >
-          Add new category
-        </label>
-        <div className="flex gap-2">
-          <input
-            id="new-category"
-            type="text"
-            value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
-            className="w-full border border-neutral-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-300 bg-white"
-            placeholder="Category name..."
-          />
-          <button
-            onClick={handleAdd}
-            className="px-4 py-2 rounded-md bg-neutral-800 text-white text-sm font-semibold"
-          >
-            +
-          </button>
-        </div>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 package com.ensolvers.challenge.backend.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,6 +15,7 @@ public class Category {
     private Long id;
 
     private String name;
+    @Column(nullable = false)
     private String color; 
 
     public Long getId() {
